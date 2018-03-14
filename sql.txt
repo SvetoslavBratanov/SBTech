@@ -1,0 +1,60 @@
+-- MySQL Workbench Forward Engineering 
+SET @old_unique_checks=@@unique_checks, unique_checks=0;SET @old_foreign_key_checks=@@foreign_key_checks, foreign_key_checks=0;SET @old_sql_mode=@@sql_mode, sql_mode='TRADITIONAL,ALLOW_INVALID_DATES';
+-- ----------------------------------------------------- 
+-- Schema mydb 
+-- ----------------------------------------------------- 
+-- ----------------------------------------------------- 
+-- Schema mydb 
+-- -----------------------------------------------------CREATE SCHEMA 
+  IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;USE `mydb` ; 
+    -- ----------------------------------------------------- 
+    -- Table `mydb`.`Events` 
+    -- -----------------------------------------------------CREATE TABLE IF NOT EXISTS `mydb`.`events` 
+                 ( 
+                              `away`      VARCHAR(255) NOT NULL, 
+                              `home`      VARCHAR(255) NOT NULL, 
+                              `eventtime` DATETIME NOT NULL, 
+                              `id`        INT NOT NULL auto_increment, 
+                              `type`      VARCHAR(100) NOT NULL, 
+                              PRIMARY KEY (`id`), 
+                              UNIQUE INDEX `id_unique` (`id` asc) 
+                 ) 
+                 engine = innodb; 
+     
+    -- ----------------------------------------------------- 
+    -- Table `mydb`.`Markets` 
+    -- -----------------------------------------------------CREATE TABLE IF NOT EXISTS `mydb`.`markets` 
+                 ( 
+                              `id`        INT NOT NULL auto_increment, 
+                              `name`      VARCHAR(100) NOT NULL, 
+                              `number`    INT NOT NULL, 
+                              `events_id` INT NOT NULL, 
+                              PRIMARY KEY (`id`), 
+                              UNIQUE INDEX `id_unique` (`id` asc), 
+                              INDEX `fk_markets_events_idx` (`events_id` ASC), 
+                              CONSTRAINT `events_id` FOREIGN KEY (`events_id`) REFERENCES `mydb`.`events` (`id`) ON
+                 DELETE CASCADE 
+                 ON 
+                 UPDATE no action 
+                 ) 
+                 engine = innodb; 
+           
+          -- ----------------------------------------------------- 
+          -- Table `mydb`.`Selections` 
+          -- -----------------------------------------------------CREATE TABLE IF NOT EXISTS `mydb`.`selections` 
+                       ( 
+                                    `id`          INT NOT NULL auto_increment, 
+                                    `number`      INT NOT NULL, 
+                                    `participant` VARCHAR(45) NOT NULL, 
+                                    `oddsdecimal` VARCHAR(45) NOT NULL, 
+                                    `description` VARCHAR(45) NULL DEFAULT NULL, 
+                                    `markets_id`  INT NOT NULL, 
+                                    PRIMARY KEY (`id`), 
+                                    UNIQUE INDEX `id_unique` (`id` asc), 
+                                    INDEX `fk_selections_markets1_idx` (`markets_id` ASC), 
+                                    CONSTRAINT `fk_selections_markets1` FOREIGN KEY (`markets_id`) REFERENCES `mydb`.`markets` (`id`) ON
+                       DELETE CASCADE 
+                       ON 
+                       UPDATE no action 
+                       ) 
+                       engine = innodb;SET sql_mode=@old_sql_mode;SET foreign_key_checks=@old_foreign_key_checks;SET unique_checks=@old_unique_checks;
